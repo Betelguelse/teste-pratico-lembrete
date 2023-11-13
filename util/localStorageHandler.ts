@@ -1,50 +1,64 @@
 'use client';
 
-export interface ILembrete extends ISalvavel{
-    
+// definição de variáveis
+
+export interface ILembrete{    
     nome: string;
     data: Date;
+    id: Number;
 }
 
-interface ISalvavel{
-    id:  Number;
-}
+// controle de CRUD
 
-export class LocalStorageHandler<T extends ISalvavel>{
+export class LocalStorageHandler{
 
     chave: string;
-    dados: T[];
+    lembretes: Map<string, ILembrete[]>;
 
+    CHAVE_DADOS = "lembretes";
 
-    constructor(chave){
-        this.chave = chave;
+    // salvar lembretes criados
+    
+    salvarDados(novosLembretes: Map<string, ILembrete[]>){
+        localStorage.setItem(this.chave, JSON.stringify(novosLembretes));
+    }
+    
+    // criar novos lembretes
+
+    create(lembrete: ILembrete, data: string){
+        const lembretesAtuais: Map<string, ILembrete[]> = this.read();
+
+        let lembretesData: ILembrete[] = [];
         
-    }
-    
-    salvarDados(novosDados: T[]){
-        localStorage.setItem(this.chave, JSON.stringify(novosDados));
-    }
-    
-    create(dado: T){
-        const dadosAtuais = this.read();
-        dadosAtuais.push(dado);
-        this.salvarDados(dadosAtuais);
+        if(lembretesAtuais.has(data)){
+            lembretesData = lembretesAtuais.get(data);
+        }
+
+        this.salvarDados(lembretesAtuais);
     }
 
-    read(): T[]{
+    // ler lembretes existentes 
+
+    read(): Map<string, ILembrete[]>{
         let dadosString = localStorage.getItem(this.chave)
+
         if(dadosString == null || dadosString == ""){
-            dadosString = "[]";
+            dadosString = "{}";
         }
-        this.dados = JSON.parse(dadosString);
-        return this.dados;
+
+        this.lembretes = JSON.parse(dadosString);
+
+        return new Map(Object.entries(this.lembretes));
     }
 
     // update(){
     // }
 
-    delete(id){
-        let dadosAtuais = this.read();
-        dadosAtuais = dadosAtuais.filter(dado => id != dado.id);
-    }
+    // deletar lembretes existentes
+
+    // delete(id){
+    //     let lembretesAtuais = this.read();
+
+    //     lembretesAtuais = lembretesAtuais.filter(lembretes => id != lembretes.id);
+    // }
 }

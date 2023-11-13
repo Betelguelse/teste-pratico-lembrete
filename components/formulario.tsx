@@ -1,8 +1,11 @@
 'use client';
+
 import React from "react";
 import { ILembrete, LocalStorageHandler } from "../util/localStorageHandler";
 
 const Formulario: React.FC = (props) =>{
+
+    // função para guardar o lembrete à ser criado
 
     const handleSubmit = (event) => {
         
@@ -10,7 +13,7 @@ const Formulario: React.FC = (props) =>{
         
         const formData = new FormData(event.target);
 
-        const localStorageHandler: LocalStorageHandler<ILembrete> = new LocalStorageHandler("lembretes");
+        const localStorageHandler: LocalStorageHandler = new LocalStorageHandler();
 
         const lembretes = localStorageHandler.read();
 
@@ -21,9 +24,12 @@ const Formulario: React.FC = (props) =>{
             data: new Date(formData.get("data").toString())
             
         }
-        localStorageHandler.create(novoDado);
+
+        localStorageHandler.create(novoDado, formData.get("data").toString());
    
     }
+
+    // retorna formulário para novo lembrete
 
     return(
         <form onSubmit={handleSubmit}>

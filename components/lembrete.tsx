@@ -1,9 +1,13 @@
 import React from "react";
 
+// definição das variáveis
+
 interface IProps {
     name: string;
     completed: boolean | string;
 }
+
+// retorna os lembretes salvos
 
 const Lembrete: React.FC<IProps> = (props: IProps) => {
     return(
