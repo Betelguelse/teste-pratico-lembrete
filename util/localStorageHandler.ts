@@ -5,7 +5,7 @@
 export interface ILembrete{    
     nome: string;
     data: Date;
-    id: number;
+    id?: number;
 }
 
 // controle de CRUD
@@ -19,15 +19,15 @@ export class LocalStorageHandler{
     CHAVE_DADOS = "lembretes";
 
     obterUltimoId(){
-        const lembretes = this.read();
-        console.log(this.ultimoId);
+        const lembretesAtuais = this.read();
+        
         if(this.ultimoId !== undefined){
             return this.ultimoId;
         }
 
         let ultimoId: number;
 
-        lembretes.forEach((lembretes: ILembrete[]) => {
+        lembretesAtuais.forEach((lembretes: ILembrete[]) => {
             lembretes.forEach(lembrete => {
                 if(lembrete.id > ultimoId){
                     ultimoId = lembrete.id;
@@ -42,7 +42,7 @@ export class LocalStorageHandler{
     // salvar lembretes criados
     
     salvarDados(novosLembretes: Map<string, ILembrete[]>){
-        localStorage.setItem(this.chave, JSON.stringify(novosLembretes));
+        localStorage.setItem(this.CHAVE_DADOS, JSON.stringify(Object.fromEntries(novosLembretes)));
     }
     
     // criar novos lembretes
@@ -58,7 +58,7 @@ export class LocalStorageHandler{
         lembrete.id = this.obterUltimoId() + 1;
         lembretesData.push(lembrete);
         lembretesAtuais.set(data, lembretesData);
-
+        console.log(lembretesAtuais);
         this.salvarDados(lembretesAtuais);
     }
 
@@ -68,7 +68,7 @@ export class LocalStorageHandler{
         let dadosString = localStorage.getItem(this.chave)
 
         if(dadosString == null || dadosString == ""){
-            dadosString = "{\"2023-11-01\": [{\"id\": 1, \"nome\": \"Teste\", \"data\": \"2023-11-01\"}]}";
+            dadosString = "{}";
         }
 
         const lembretes = JSON.parse(dadosString);

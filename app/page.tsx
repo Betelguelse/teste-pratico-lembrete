@@ -1,3 +1,5 @@
+'use client';
+
 import Lembrete from "../components/lembrete";
 import Formulario from "../components/formulario";
 import { LocalStorageHandler, ILembrete } from "../util/localStorageHandler";
@@ -5,8 +7,12 @@ import TabelaLembretes from "../components/tabelaLembretes";
 
 // exibição da página
 
-export default function Page() 
+export default async function Page() 
 {
+
+    const handleCreate = (data) => {
+        console.log(data);
+    }
 
     // retorna o formulário de lembretes e os lembretes existentes
 
@@ -22,7 +28,7 @@ export default function Page()
                     {/* inserção de lembretes novos */}
 
                     <section id="insercao">
-                       <Formulario></Formulario>
+                       <Formulario oncreate={handleCreate}></Formulario>
                     </section>
 
                     {/* exibição de lembretes atuais */} 

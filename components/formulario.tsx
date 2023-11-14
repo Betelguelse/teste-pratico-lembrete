@@ -3,7 +3,11 @@
 import React from "react";
 import { ILembrete, LocalStorageHandler } from "../util/localStorageHandler";
 
-const Formulario: React.FC = (props) =>{
+interface IProps {
+    oncreate: Function;
+}
+
+const Formulario: React.FC<IProps> = (props: IProps) =>{
 
     // função para guardar o lembrete à ser criado
 
@@ -19,14 +23,14 @@ const Formulario: React.FC = (props) =>{
 
         let novoDado: ILembrete = 
         {
-            id: 1,
+         
             nome: formData.get("nome").toString(),
             data: new Date(formData.get("data").toString())
             
         }
 
         localStorageHandler.create(novoDado, formData.get("data").toString());
-   
+        props.oncreate(localStorageHandler.read());
     }
 
     // retorna formulário para novo lembrete
