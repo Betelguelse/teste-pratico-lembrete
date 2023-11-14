@@ -5,7 +5,7 @@
 export interface ILembrete{    
     nome: string;
     data: Date;
-    id: Number;
+    id: number;
 }
 
 // controle de CRUD
@@ -13,9 +13,31 @@ export interface ILembrete{
 export class LocalStorageHandler{
 
     chave: string;
-    lembretes: Map<string, ILembrete[]>;
+    // CONSIDERANDO QUE O ID É CONTROLADO APENAS PELO USUÁRIO (NÃO É POSSÍVEL UMA ALTERAÇÃO DE ID QUE NÃO SEJA POR AÇÃO DO USUÁRIO DESTE BROWSER, podemos armazenar o Id no cache sem preocupação de algo ser inserido com o próximo id antes deste id ser utilizado)
+    private ultimoId: number;
 
     CHAVE_DADOS = "lembretes";
+
+    obterUltimoId(){
+        const lembretes = this.read();
+        console.log(this.ultimoId);
+        if(this.ultimoId !== undefined){
+            return this.ultimoId;
+        }
+
+        let ultimoId: number;
+
+        lembretes.forEach((lembretes: ILembrete[]) => {
+            lembretes.forEach(lembrete => {
+                if(lembrete.id > ultimoId){
+                    ultimoId = lembrete.id;
+                }
+            })
+        });
+        
+        this.ultimoId = ultimoId;
+        return ultimoId;
+    }
 
     // salvar lembretes criados
     
@@ -28,11 +50,14 @@ export class LocalStorageHandler{
     create(lembrete: ILembrete, data: string){
         const lembretesAtuais: Map<string, ILembrete[]> = this.read();
 
-        let lembretesData: ILembrete[] = [];
+        let lembretesData = [];
         
         if(lembretesAtuais.has(data)){
             lembretesData = lembretesAtuais.get(data);
         }
+        lembrete.id = this.obterUltimoId() + 1;
+        lembretesData.push(lembrete);
+        lembretesAtuais.set(data, lembretesData);
 
         this.salvarDados(lembretesAtuais);
     }
@@ -43,12 +68,12 @@ export class LocalStorageHandler{
         let dadosString = localStorage.getItem(this.chave)
 
         if(dadosString == null || dadosString == ""){
-            dadosString = "{}";
+            dadosString = "{\"2023-11-01\": [{\"id\": 1, \"nome\": \"Teste\", \"data\": \"2023-11-01\"}]}";
         }
 
-        this.lembretes = JSON.parse(dadosString);
+        const lembretes = JSON.parse(dadosString);
 
-        return new Map(Object.entries(this.lembretes));
+        return new Map(Object.entries(lembretes));
     }
 
     // update(){

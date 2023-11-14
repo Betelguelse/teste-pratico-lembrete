@@ -21,9 +21,9 @@ const TabelaLembretes: React.FC = (props) =>{
         let lembretesTratadosAux = [];
 
         lembretes.forEach((lembretes, data) => {lembretesTratadosAux.push([data, lembretes])});
-
+        
         setLembretesTratados(lembretesTratadosAux);
-    })
+    }, [])
 
     // retorna a lista de lembretes
 
@@ -33,9 +33,9 @@ const TabelaLembretes: React.FC = (props) =>{
 
             {lembretesTratados.map(v => {
                 return v[1].map((lembrete: ILembrete) => {
-                    return <Lembrete name={lembrete.nome} completed="true"></Lembrete>
+                    return <Lembrete key={lembrete.id.toString()} name={lembrete.nome} completed="true"></Lembrete>
                 })
-            } ) }
+            })}
 
             {/* {(lembretesTratados.map).map((lembrete) => <Lembrete name={lembrete.nome} completed="true"></Lembrete>)} */}
             
